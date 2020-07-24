@@ -5,4 +5,4 @@ function h(){
 }
 h();
 ?>
-a
+aaaa
