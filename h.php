@@ -5,3 +5,4 @@ function h(){
 }
 h();
 ?>
+a
