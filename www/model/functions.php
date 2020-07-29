@@ -134,7 +134,7 @@ function is_valid_upload_image($image){
   }
   return true;
 }
-
+//html文字列のエスケープ処理によるクロスサイトスクリプティング防止用
 function h($text){
     return htmlspecialchars($text);
 }
