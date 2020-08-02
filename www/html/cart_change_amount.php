@@ -18,7 +18,7 @@ $cart_id = get_post('cart_id');
 $amount = get_post('amount');
 $token = get_post('token');
 
-if(is_valid_csrf_token($token)===TRUE){
+if(is_valid_csrf_token($token) === TRUE){
   if(update_cart_amount($db, $cart_id, $amount)){
     set_message('購入数を更新しました。');
   } else {
