@@ -145,7 +145,7 @@ function delete_item($db, $item_id){
 
 
 // 非DB
-
+//商品が公開されているか否かをチェックし、公開(1)であればTRUEを返す
 function is_open($item){
   return $item['status'] === 1;
 }

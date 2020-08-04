@@ -54,7 +54,7 @@ function get_errors(){
   set_session('__errors',  array());
   return $errors;
 }
-
+//エラーがあった場合TRUEを返す
 function has_error(){
   return isset($_SESSION['__errors']) && count($_SESSION['__errors']) !== 0;
 }

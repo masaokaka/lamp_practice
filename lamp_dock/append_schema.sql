@@ -15,7 +15,7 @@ CREATE TABLE `order_details` (
     --注文番号--
     `order_id` int(11) NOT NULL,
     --商品ID--
-    `item_id` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `item_id` int(11) NOT NULL,
     --商品の購入数--
     `amount` int(11) NOT NULL
 )
