@@ -15,7 +15,7 @@ function get_db_connect(){
   }
   return $dbh;
 }
-
+//データベースから指定のデータを一行だけ取得する時
 function fetch_query($db, $sql, $params = array()){
   try{
     $statement = $db->prepare($sql);
@@ -26,7 +26,7 @@ function fetch_query($db, $sql, $params = array()){
   }
   return false;
 }
-
+//データベースから指定のデータを配列で取得する時
 function fetch_all_query($db, $sql, $params = array()){
   try{
     $statement = $db->prepare($sql);
@@ -37,7 +37,7 @@ function fetch_all_query($db, $sql, $params = array()){
   }
   return false;
 }
-
+//データベースに対して処理を実行する時
 function execute_query($db, $sql, $params = array()){
   try{
     $statement = $db->prepare($sql);
