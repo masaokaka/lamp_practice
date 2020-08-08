@@ -107,10 +107,16 @@ function purchase_carts($db, $carts){
   if(validate_cart_purchase($carts) === false){
     return false;
   }
-  //上記チェックで商品が購入可能だった場合、トランザクション開始して以下の処理を連続して行う
-  $db->beginTransaction();
+  //　上記チェックで商品が購入可能だった場合、トランザクション開始して以下の処理を連続して行う
   try {
-    //stockテーブルから購入分の商品を引き去る処理を行う
+    $db->beginTransaction();
+    //　購入履歴をデータベースに登録する
+    insert_orders($db, $carts[0]['user_id']);
+    
+    //　inset_orders関数処理でデータベースにorder_idを登録し、そこからorder_idを取得
+    $order_id = $db->lastInsertId();
+    
+    //　stockテーブルから購入分の商品を引き去る処理を行う
     foreach($carts as $cart){
       if(update_item_stock(
         $db, 
@@ -119,24 +125,28 @@ function purchase_carts($db, $carts){
       ) === false){
       set_error($cart['name'] . 'の購入に失敗しました。');
       }
-      //購入履歴をデータベースに登録する
-      insert_orders($db, $cart['user_id'], $cart['item_id'], $cart['amount']);
+    
+      //　購入履歴詳細を取得（一度で何種類もデータを取るのでforeachで回している）
+      insert_order_details($db, $order_id, $cart['item_id'], $cart['amount'], $cart['price']);
     }
-    //stockテーブルの更新と購入履歴データの登録後、購入済のカート内商品を削除する
+    
+    //　stockテーブルの更新と購入履歴データの登録後、購入済のカート内商品を削除する
     delete_user_carts($db, $carts[0]['user_id']);  
-    // コミット処理
+    
+    //　ここまでの処理でエラーがあるかチェック
+    if(has_error()===TRUE){
+      // エラーがあればロールバック処理
+      $db->rollback();
+    } else{
+      // なければコミット処理
     $db->commit();
-  } catch (PDOException $e) {
-    // ロールバック処理
-    $db->rollback();
-    // 例外をスロー
-    throw $e;
-  //エラーメッセージを表示
+    }
+  //　エラーメッセージを表示
   } catch (PDOException $e) {
   echo 'データベース処理でエラーが発生しました。理由：'.$e->getMessage();
   }
 }
-
+//カート内の商品を削除する
 function delete_user_carts($db, $user_id){
   $sql = "
     DELETE FROM
@@ -147,7 +157,6 @@ function delete_user_carts($db, $user_id){
 
   execute_query($db, $sql, [$user_id]);
 }
-
 
 function sum_carts($carts){
   $total_price = 0;
@@ -180,27 +189,31 @@ function validate_cart_purchase($carts){
   return true;
 }
 //購入履歴を登録するユーザー関数
-function insert_orders($db, $user_id, $item_id, $amount){
+function insert_orders($db, $user_id){
   //購入履歴画面に必要な情報の登録
   $sql = "
     INSERT INTO
       orders(
-        user_id,
+        user_id
       )
     VALUES(?)
   ";
   return execute_query($db, $sql, [$user_id]);
-  $id = $db->lastInsertId();
+  
+}
+  
+function insert_order_details($db, $order_id, $item_id, $amount, $price){
   //購入履歴詳細画面に必要な情報の登録
   $sql = "
     INSERT INTO
       order_details(
         order_id,
         item_id,
-        amount
+        amount,
+        price
       )
-    VALUES(?,?,?)
+    VALUES(?,?,?,?)
   ";
-  return execute_query($db, $sql, [$id, $item_id, $amount]);
+  return execute_query($db, $sql, [$order_id, $item_id, $amount, $price]);
 }
 
