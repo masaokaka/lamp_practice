@@ -1,82 +1,88 @@
 <?php 
-require_once MODEL_PATH . 'functions.php';
-require_once MODEL_PATH . 'db.php';
 
-//全ての購入履歴を取得
-function get_all_orders($db){
+//ユーザーの購入履歴を取得
+function get_user_orders($db, $user_id = null){
+  $user = array();
   $sql = "
     SELECT
       orders.order_id,
       orders.order_date,
-      orders.user_id
+      (SELECT SUM(price * amount) FROM order_details WHERE order_id = orders.order_id)
+    AS
+      total
     FROM
-      orders
-  ";
-  return fetch_all_query($db, $sql);
+      orders"
+    ;
+    if($user_id!==null){
+      $user[] = $user_id;
+      $sql .= " WHERE
+              user_id = ? ";
+    }
+
+  return fetch_all_query($db, $sql, $user);
 }
 
-//ユーザーの購入履歴のみを取得
-function get_user_orders($db, $user_id){
-  $sql = "
-    SELECT
-      orders.order_id,
-      orders.order_date,
-      orders.user_id
-    FROM
-      orders
-    WHERE
-      orders.user_id = ?
-  ";
-  return fetch_all_query($db, $sql, [$user_id]);
-}
-
-//全ての購入履歴を詳細まで取得
-function get_all_order_details($db){
+//全てのユーザーの注文の詳細データの取得（管理者のみ）
+function get_all_order_details($db, $order_id){
   $sql = "
     SELECT
       orders.order_id,
       orders.order_date,
       orders.user_id,
+      order_details.order_id,
       order_details.item_id,
       order_details.amount,
-      order_details.price
+      order_details.price,
+      items.name
     FROM
-      orders
-    JOIN
       order_details
+    JOIN
+      orders
     ON
       orders.order_id = order_details.order_id
+    JOIN
+      items
+    ON
+      order_details.item_id = items.item_id
+    WHERE
+      orders.order_id = ? 
   ";
-  return fetch_all_query($db, $sql);
+  return fetch_all_query($db, $sql, [$order_id]);
 }
 
-
-//ユーザーの購入履歴を詳細まで取得
-function get_user_order_details($db, $user_id){
+//特定ユーザーの注文の詳細データの取得
+function get_user_order_details($db, $order_id, $user_id){
   $sql = "
     SELECT
       orders.order_id,
       orders.order_date,
       orders.user_id,
+      order_details.order_id,
       order_details.item_id,
       order_details.amount,
-      order_details.price
+      order_details.price,
+      items.name
     FROM
-      orders
-    JOIN
       order_details
+    JOIN
+      orders
     ON
       orders.order_id = order_details.order_id
+    JOIN
+      items
+    ON
+      order_details.item_id = items.item_id
     WHERE
-      orders.user_id = ?
+      orders.order_id = ? AND orders.user_id = ?
   ";
-  return fetch_all_query($db, $sql, [$user_id]);
-}
 
-function sum_orders($orders){
+  return fetch_all_query($db, $sql, [$order_id, $user_id]);
+}
+//商品の小計を表示
+function sum_orders($order_details){
   $total_price = 0;
-  foreach($orders as $order){
-    $total_price += $order['price'] * $order['amount'];
+  foreach($order_details as $details){
+    $total_price += $details['price'] * $details['amount'];
   }
   return $total_price;
 }

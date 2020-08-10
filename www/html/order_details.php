@@ -1,10 +1,11 @@
 <?php
 require_once '../conf/const.php';
 require_once MODEL_PATH . 'functions.php';
+require_once MODEL_PATH . 'db.php';
 require_once MODEL_PATH . 'user.php';
 require_once MODEL_PATH . 'item.php';
 require_once MODEL_PATH . 'cart.php';
-require_once MODEL_PATH . 'order_details.php';
+require_once MODEL_PATH . 'orders.php';
 
 session_start();
 
@@ -19,7 +20,7 @@ $order_id = get_post('order_id');
 //管理ユーザーでログインしていた場合は全ての購入履歴を取得
 if(is_admin($user)===false){
   //ログイン中のユーザーの購入履歴詳細
-  $order_details = get_user_order_details($db, $user['user_id'], $order_id);
+  $order_details = get_user_order_details($db, $order_id, $user['user_id']);
 } else {
   //全ての購入履歴詳細
   $order_details = get_all_order_details($db, $order_id);

@@ -28,7 +28,7 @@
           <tr>
             <td><?php print(h($order['order_id'])); ?></td>
             <td><?php print(h($order['order_date'])); ?></td>
-            <td>合計金額: <?php print number_format(h($total_price)); ?>円</td>
+            <td><?php print number_format(h($order['total'])); ?>円</td>
             <!--購入履歴詳細画面へ飛ぶボタン-->
             <td>
                 <form method="post" action="order_details.php">

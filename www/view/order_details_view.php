@@ -33,7 +33,7 @@
             <td><?php print(h($order['name'])); ?></td>
             <td><?php print number_format(h($order['price'])); ?>円</td>
             <td><?php print number_format(h($order['amount'])); ?></td>
-            <td>小計：<?php print number_format(h($order['price'] * $order['amount'])); ?>円</td>
+            <td><?php print number_format(h($order['price'] * $order['amount'])); ?>円</td>
           </tr>
           <?php } ?>
         </tbody>
