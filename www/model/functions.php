@@ -45,7 +45,7 @@ function set_session($name, $value){
 function set_error($error){
   $_SESSION['__errors'][] = $error;
 }
-
+//エラーがあれば取得する
 function get_errors(){
   $errors = get_session('__errors');
   if($errors === ''){
