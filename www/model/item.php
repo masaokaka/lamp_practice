@@ -21,7 +21,7 @@ function get_item($db, $item_id){
 
   return fetch_query($db, $sql,[$item_id]);
 }
-
+//$is_openにfalseが入れば全ての商品情報を取得、Trueが入れば公開中の商品のみ取得
 function get_items($db, $is_open = false){
   $sql = '
     SELECT
@@ -42,13 +42,52 @@ function get_items($db, $is_open = false){
 
   return fetch_all_query($db, $sql);
 }
-
+//全てのアイテムを取得する
 function get_all_items($db){
   return get_items($db);
 }
-
+//公開中のアイテムのみを取得
 function get_open_items($db){
   return get_items($db, true);
+}
+
+//並び順に応じてアイテムを取得する
+function get_item_order_by($db, $order){
+  $sql = '
+    SELECT
+      item_id, 
+      name,
+      stock,
+      price,
+      image,
+      status,
+      created
+    FROM
+      items
+    WHERE 
+      status = 1
+  ';
+  if($order === "new"){
+    $sql .= '
+      ORDER BY
+        created
+        DESC
+    ';
+  } else if($order === "low"){
+    $sql .= '
+      ORDER BY
+        price
+        ASC
+    ';
+  } else if($order === "high"){
+    $sql .= '
+      ORDER BY
+        price
+        DESC
+    ';
+  }
+
+  return fetch_all_query($db, $sql);
 }
 
 function regist_item($db, $name, $price, $stock, $status, $image){
