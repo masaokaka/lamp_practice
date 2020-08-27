@@ -42,6 +42,19 @@
       </div>
     </div>
   </div>
+
+  <!--ページネーション-->
+  <div style="text-align:center;">
+      <?php
+        //総アイテム数を1ページに表示する数で割り、切り上げた数が総ページ数
+          $total_page = ceil(count($All_items)/8);
+          $page = 1;
+          while($page <= $total_page){
+      ?>
+          <a href="?page=<?php print $page; ?>"><?php print $page.'   '; ?></a>
+            <?php $page++;?>
+          <?php } ?>
+  </div>
   
 </body>
 </html>

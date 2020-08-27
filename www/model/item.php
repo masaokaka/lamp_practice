@@ -22,7 +22,7 @@ function get_item($db, $item_id){
   return fetch_query($db, $sql,[$item_id]);
 }
 
-function get_items($db, $is_open = false){
+function get_items($db, $is_open = false, $page = null){
   $sql = '
     SELECT
       item_id, 
@@ -39,7 +39,13 @@ function get_items($db, $is_open = false){
       WHERE status = 1
     ';
   }
-
+  //ページ数に応じて表示する商品をLIMITする
+  if($page === 1){
+    $sql .='LIMIT 8';
+  } else if($page > 1){
+    $sql .='
+      LIMIT ' . (($page - 1)*8) . ', 8';
+  }
   return fetch_all_query($db, $sql);
 }
 
@@ -47,8 +53,8 @@ function get_all_items($db){
   return get_items($db);
 }
 
-function get_open_items($db){
-  return get_items($db, true);
+function get_open_items($db,$page){
+  return get_items($db, true, $page);
 }
 
 function regist_item($db, $name, $price, $stock, $status, $image){
