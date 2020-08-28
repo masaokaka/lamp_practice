@@ -30,13 +30,18 @@ function get_items($db, $is_open = false){
       stock,
       price,
       image,
-      status
+      status,
+      created
     FROM
       items
   ';
   if($is_open === true){
     $sql .= '
-      WHERE status = 1
+      WHERE
+        status = 1
+      ORDER BY
+        created
+        DESC
     ';
   }
 

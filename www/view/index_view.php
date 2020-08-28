@@ -17,14 +17,14 @@
     
     <!--商品の並べ替え機能を追加-->
     <div style="text-align: right;">
-        <form method="get" action="index_order_by.php">
-          <select name="order_by">
-            <option class="dropdown-item" value="new">新着順</option>
-            <option class="dropdown-item" value="low">価格の安い順</option>
-            <option class="dropdown-item" value="high">価格の高い順</option>
-          </select>
-          <input type="submit" value="並び替え" class="btn btn-primary btn-sm">
-        </form>
+          <form method="get" action="index_order_by.php" >
+            <select name="order_by" style="padding: 2px 0 7px; vertical-align: middle;">
+              <option value="new" <?php if($order === 'new'){ print 'selected';} ?>>新着順</option>
+              <option value="low" <?php if($order === 'low'){ print 'selected';} ?>>価格の安い順</option>
+              <option value="high" <?php if($order === 'high'){ print 'selected';} ?>>価格の高い順</option>
+            </select>
+            <input type="submit" value="並び替え" class="btn btn-primary btn-sm">
+          </form>
     </div>
     
     <!--商品一覧-->
