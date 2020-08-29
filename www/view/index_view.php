@@ -59,15 +59,52 @@
 
   <!--ページネーション-->
   <div style="text-align:center;">
-      <?php
+      <?php 
+        $item_per_page = count($items);
+        $All_item_amount = count($All_items);
         //総アイテム数を1ページに表示する数で割り、切り上げた数が総ページ数
-          $total_page = ceil(count($All_items)/8);
-          $page = 1;
-          while($page <= $total_page){
+        $total_page = ceil(count($All_items)/ITEMS_PER_PAGE);
+        //現在のページ取得
+        if(isset($_GET['page'])===TRUE){
+          $current_page = $_GET['page'];
+        } else {
+          $current_page = 1;
+        }
       ?>
-          <a href="?page=<?php print $page; ?>"><?php print $page.'   '; ?></a>
-            <?php $page++;?>
-          <?php } ?>
+      <!--件数表示-->
+      <p>
+        全<?php print count($All_items);?>件中
+        <?php
+          if($current_page === 1){
+            print 1;
+          } else {
+            print ($All_item_amount + 1) - ($All_item_amount - (($current_page -1) * ITEMS_PER_PAGE));
+          }
+        ?>〜
+        <?php 
+          if($current_page === 1){
+            print $item_per_page;
+          } else {
+            print (($current_page - 1) * ITEMS_PER_PAGE) + $item_per_page;
+          }
+        ?>件
+      </p>
+      <!--ページごとリンク-->
+      <div>
+        <?php
+        $page = 1; 
+        while($total_page > 0){ ?>
+          <!--現在のページと表示するページ番号が同じの場合はリンクなしの普通の文字-->
+          <?php if($page == $current_page){?>
+            <span><?php print $page;?></span>
+          <?php }else { ?>
+            <span><a href="?page=<?php print $page; ?>"><?php print $page; ?></a></span>
+          <?php }
+            $total_page--;
+            $page++;
+          ?>
+        <?php } ?>
+      </div>
   </div>
   
 </body>

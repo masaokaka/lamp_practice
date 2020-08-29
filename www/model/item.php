@@ -21,13 +21,8 @@ function get_item($db, $item_id){
 
   return fetch_query($db, $sql,[$item_id]);
 }
-<<<<<<< HEAD
-
-function get_items($db, $is_open = false, $page = null){
-=======
 //$is_openにfalseが入れば全ての商品情報を取得、Trueが入れば公開中の商品のみ取得
-function get_items($db, $is_open = false){
->>>>>>> d98f4139a39e3866df3e024344aaae643adfe140
+function get_items($db, $is_open = false, $page = null ){
   $sql = '
     SELECT
       item_id, 
@@ -62,15 +57,9 @@ function get_items($db, $is_open = false){
 function get_all_items($db){
   return get_items($db);
 }
-<<<<<<< HEAD
-
+//公開中のアイテムのみを取得
 function get_open_items($db,$page){
   return get_items($db, true, $page);
-=======
-//公開中のアイテムのみを取得
-function get_open_items($db){
-  return get_items($db, true);
->>>>>>> d98f4139a39e3866df3e024344aaae643adfe140
 }
 
 //並び順に応じてアイテムを取得する
