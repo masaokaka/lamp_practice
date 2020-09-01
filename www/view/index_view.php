@@ -17,7 +17,7 @@
     
     <!--商品の並べ替え機能を追加-->
     <div style="text-align: right;">
-          <form method="get" action="index_order_by.php" >
+          <form method="get" action="index.php" >
             <select name="order_by" style="padding: 2px 0 7px; vertical-align: middle;">
               <option value="new" <?php if($order === 'new'){ print 'selected';} ?>>新着順</option>
               <option value="low" <?php if($order === 'low'){ print 'selected';} ?>>価格の安い順</option>
@@ -93,17 +93,20 @@
       <div>
         <?php
         $page = 1; 
-        while($total_page > 0){ ?>
-          <!--現在のページと表示するページ番号が同じの場合はリンクなしの普通の文字-->
-          <?php if($page == $current_page){?>
+        while($total_page > 0){ 
+          //現在のページと表示するページ番号が同じの場合はリンクなしの普通の文字
+          if($page == $current_page){ ?>
             <span><?php print $page;?></span>
-          <?php }else { ?>
-            <span><a href="?page=<?php print $page; ?>"><?php print $page; ?></a></span>
+          <?php }else { 
+          //並び替えが入った状態で次のページに行っても並び替えが継承されて商品を表示
+          if(isset($_GET['order_by'])){
+            $order = $_GET['order_by'];
+          }?>
+            <span><a href="?page=<?php print $page; ?>&order_by=<?php print $order;?>"><?php print $page; ?></a></span>
           <?php }
             $total_page--;
             $page++;
-          ?>
-        <?php } ?>
+        } ?>
       </div>
   </div>
   

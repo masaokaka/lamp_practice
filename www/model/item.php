@@ -21,8 +21,8 @@ function get_item($db, $item_id){
 
   return fetch_query($db, $sql,[$item_id]);
 }
-//$is_openにfalseが入れば全ての商品情報を取得、Trueが入れば公開中の商品のみ取得
-function get_items($db, $is_open = false, $page = null ){
+//商品取得用ユーザー定義関数
+function get_items($db, $is_open = false, $order = null, $page = null){
   $sql = '
     SELECT
       item_id, 
@@ -35,18 +35,33 @@ function get_items($db, $is_open = false, $page = null ){
     FROM
       items
   ';
+  //公開されている商品のみ取得
   if($is_open === true){
     $sql .= '
       WHERE
-        status = 1
+        status = 1';
+  }
+  //指定の並び順で商品を取得
+  if($order === "new"){
+    $sql .= '
       ORDER BY
         created
-        DESC
-    ';
+        DESC';
+  } else if($order === "low"){
+    $sql .= '
+      ORDER BY
+        price
+        ASC';
+  } else if($order === "high"){
+    $sql .= '
+      ORDER BY
+        price
+        DESC';
   }
-  //ページ数に応じて表示する商品をLIMITする
+  //現在のページ数に応じて表示する商品をLIMITする
   if($page === 1){
-    $sql .='LIMIT 8';
+    $sql .='
+      LIMIT 8';
   } else if($page > 1){
     $sql .='
       LIMIT ' . (($page - 1)*8) . ', 8';
@@ -58,47 +73,8 @@ function get_all_items($db){
   return get_items($db);
 }
 //公開中のアイテムのみを取得
-function get_open_items($db,$page){
-  return get_items($db, true, $page);
-}
-
-//並び順に応じてアイテムを取得する
-function get_item_order_by($db, $order){
-  $sql = '
-    SELECT
-      item_id, 
-      name,
-      stock,
-      price,
-      image,
-      status,
-      created
-    FROM
-      items
-    WHERE 
-      status = 1
-  ';
-  if($order === "new"){
-    $sql .= '
-      ORDER BY
-        created
-        DESC
-    ';
-  } else if($order === "low"){
-    $sql .= '
-      ORDER BY
-        price
-        ASC
-    ';
-  } else if($order === "high"){
-    $sql .= '
-      ORDER BY
-        price
-        DESC
-    ';
-  }
-
-  return fetch_all_query($db, $sql);
+function get_open_items($db,$order,$page){
+  return get_items($db, true, $order, $page);
 }
 
 function regist_item($db, $name, $price, $stock, $status, $image){
